@@ -1,0 +1,12 @@
+# Tema base do Streamlit alinhado ao design system do SENTINELA Orbital.
+# (o CSS fino vive em src/ui/theme.py; aqui ficam as cores nativas do framework)
+[theme]
+base = "dark"
+primaryColor = "#FF5A3C"
+backgroundColor = "#0B0E17"
+secondaryBackgroundColor = "#141A29"
+textColor = "#E8ECF4"
+font = "sans serif"
+
+[server]
+headless = true

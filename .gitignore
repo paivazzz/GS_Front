@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Modelos treinados em cache local (são gerados em runtime)
+*.joblib
+*.pkl
+
+# IDE / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
