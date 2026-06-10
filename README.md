@@ -6,6 +6,12 @@ Global Solution - FIAP - Front-End & Mobile Development em Sistemas de IA.
 Consome dados de satélite, clima e geolocalização, classifica o risco de queimada por
 estado com IA e sugere alertas de evacuação — que um operador humano aprova ou descarta.
 
+## Integrantes: 
+
+- Bruno Lanchariche Fitipaldi Lopes - RM 564129
+- Filipe Melo da Silva - RM 564571
+- Rafael de Paiva Ramos - RM 563978
+
 ## 1. O problema
 
 Secas e queimadas destroem lavouras, ecossistemas e vidas. Satélites da NASA FIRMS e do
