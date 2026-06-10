@@ -1,7 +1,7 @@
 # SENTINELA Orbital
 
 Dashboard de monitoramento de queimadas e risco climático via satélite.
-Global Solution 2026/1 - FIAP - Front-End & Mobile Development em Sistemas de IA.
+Global Solution - FIAP - Front-End & Mobile Development em Sistemas de IA.
 
 Consome dados de satélite, clima e geolocalização, classifica o risco de queimada por
 estado com IA e sugere alertas de evacuação — que um operador humano aprova ou descarta.
