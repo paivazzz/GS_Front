@@ -1,14 +1,13 @@
-"""Pipeline de risco: modelo de IA que classifica o risco de queimada por estado.
+"""Pipeline de risco: o modelo de IA que classifica o risco de queimada por estado.
 
-Diferencial de "Integração com modelo de IA": treinamos um RandomForest
-(scikit-learn) para classificar cada estado em 4 níveis de risco —
-Baixo / Moderado / Alto / Crítico — a partir de variáveis climáticas e da
+Treinamos um RandomForest (scikit-learn) para classificar cada estado em quatro
+níveis (Baixo, Moderado, Alto e Crítico) a partir de variáveis climáticas e da
 atividade de focos detectada por satélite.
 
-Como não há um dataset rotulado público embutido, geramos uma amostra sintética
-de treino a partir de uma função latente (regra física plausível) + ruído, e
-treinamos o modelo sobre ela. O modelo aprendido é então aplicado às features
-reais agregadas dos providers. A acurácia de validação é exposta na UI para honestidade.
+Como não temos um dataset rotulado embutido, geramos uma amostra sintética de treino
+a partir de uma função latente (uma regra física plausível) com ruído e treinamos o
+modelo sobre ela. Depois aplicamos esse modelo às features reais agregadas dos
+providers. A acurácia de validação aparece na interface, para não esconder nada.
 """
 from __future__ import annotations
 
@@ -18,9 +17,9 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-# Ordem canônica das features usada no treino e na predição (deve ser idêntica).
-# Usamos ``focos_dia`` (média diária de focos por estado) em vez do total da janela
-# para que o modelo seja INVARIANTE ao tamanho do período filtrado pelo usuário.
+# Ordem das features, igual no treino e na predição.
+# Usamos ``focos_dia`` (média diária por estado) em vez do total da janela para o
+# modelo não depender do tamanho do período que o usuário filtrou.
 FEATURES = ["temp_max", "umidade", "precip_mm", "dias_sem_chuva", "focos_dia", "frp_medio"]
 
 RISCO_LABELS = {0: "Baixo", 1: "Moderado", 2: "Alto", 3: "Crítico"}
@@ -44,10 +43,10 @@ def _score_latente(X: pd.DataFrame) -> np.ndarray:
 
 
 def _rotular(score: np.ndarray) -> np.ndarray:
-    """Discretiza o escore contínuo em 4 classes de risco por limiares fixos.
+    """Quebra o escore contínuo em 4 classes de risco por limiares fixos.
 
-    Limiares calibrados próximos aos quartis da amostra sintética de treino, de modo
-    que as 4 classes fiquem balanceadas (bom para o aprendizado do classificador).
+    Os limiares ficam perto dos quartis da amostra de treino, para as classes saírem
+    equilibradas e o classificador aprender melhor.
     """
     return np.select(
         [score < 3.2, score < 4.6, score < 6.0],
@@ -69,7 +68,7 @@ def _gerar_dados_treino(n: int = 4000, seed: int = 42) -> tuple[pd.DataFrame, np
             "frp_medio": rng.gamma(2.0, 20.0, n),
         }
     )
-    score = _score_latente(X) + rng.normal(0, 0.25, n)  # ruído torna o problema não-trivial
+    score = _score_latente(X) + rng.normal(0, 0.25, n)  # o ruído evita um problema trivial demais
     y = _rotular(score)
     return X, y
 
@@ -121,8 +120,8 @@ def construir_features(focos_df: pd.DataFrame, clima_snapshot: pd.DataFrame) -> 
 def prever_risco(modelo: RandomForestClassifier, features: pd.DataFrame) -> pd.DataFrame:
     """Aplica o modelo às features e anexa classe, rótulo e probabilidade de risco.
 
-    A coluna ``risco_prob`` traz a probabilidade da classe prevista (confiança do
-    modelo), útil para o fluxo de feedback humano (priorizar o que revisar).
+    A coluna ``risco_prob`` é a probabilidade da classe prevista (a confiança do
+    modelo), que ajuda o operador a priorizar o que revisar primeiro.
     """
     if features.empty:
         return features.assign(risco_classe=[], risco_label=[], risco_prob=[])

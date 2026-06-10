@@ -1,8 +1,8 @@
-"""Sidebar de filtros — componente reutilizável que devolve o estado dos filtros.
+"""Sidebar de filtros: desenha os controles e devolve o estado deles.
 
-Renderiza o logotipo, os controles de filtro (datas, bioma, confiança) e o painel
-de status do modelo de IA. Retorna uma estrutura ``Filtros`` consumida por todas as
-features, mantendo a sidebar como única fonte de verdade dos filtros globais.
+Mostra o logotipo, os filtros (datas, bioma, confiança) e o status do modelo de IA.
+Retorna um ``Filtros`` que as features consomem, então a sidebar é a única fonte de
+verdade dos filtros globais.
 """
 from __future__ import annotations
 
@@ -37,8 +37,8 @@ def renderizar(data_min: date, data_max: date, metricas_modelo: dict | None = No
         st.markdown(theme.logo(), unsafe_allow_html=True)
         st.divider()
 
-        st.markdown("#### 🎛️ Filtros")
-        # Filtro 1: intervalo de datas.
+        st.markdown("#### Filtros")
+        # Intervalo de datas.
         periodo = st.date_input(
             "Período de análise",
             value=(data_max - pd.Timedelta(days=30), data_max),
@@ -51,7 +51,7 @@ def renderizar(data_min: date, data_max: date, metricas_modelo: dict | None = No
         else:  # usuário ainda escolhendo a 2ª data
             data_inicio = data_fim = periodo if isinstance(periodo, date) else data_max
 
-        # Filtro 2: biomas (multiseleção).
+        # Biomas (múltipla escolha).
         biomas = st.multiselect(
             "Biomas",
             options=geo_provider.listar_biomas(),
@@ -59,7 +59,7 @@ def renderizar(data_min: date, data_max: date, metricas_modelo: dict | None = No
             help="Filtra os focos pelos biomas selecionados.",
         )
 
-        # Filtro 3: confiança mínima da detecção.
+        # Confiança mínima da detecção.
         confianca_min = st.slider(
             "Confiança mínima da detecção (%)",
             min_value=0, max_value=100, value=50, step=5,
@@ -68,12 +68,12 @@ def renderizar(data_min: date, data_max: date, metricas_modelo: dict | None = No
 
         st.divider()
         if metricas_modelo:
-            st.markdown("#### 🤖 Modelo de risco")
+            st.markdown("#### Modelo de risco")
             st.caption(
                 f"RandomForest · acurácia de validação **{metricas_modelo['acuracia']*100:.1f}%** "
                 f"({metricas_modelo['n_treino']} amostras de treino)."
             )
-        st.caption(f"Última atualização: {st.session_state.get('ultima_atualizacao', '—')}")
+        st.caption(f"Última atualização: {st.session_state.get('ultima_atualizacao', '-')}")
 
     return Filtros(
         data_inicio=data_inicio,

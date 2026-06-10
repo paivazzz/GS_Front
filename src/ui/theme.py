@@ -1,9 +1,8 @@
-"""Design system do SENTINELA Orbital: paleta semântica, tipografia e CSS.
+"""Design system do SENTINELA Orbital: paleta, tipografia e CSS.
 
-Centraliza a identidade visual (cores, fontes, espaçamentos) para garantir
-consistência entre telas — um dos diferenciais sugeridos ("design system próprio").
-As cores de risco são SEMÂNTICAS: verde = seguro, amarelo/laranja = atenção,
-vermelho = crítico.
+Centraliza a identidade visual (cores, fontes, espaçamentos) para as telas ficarem
+consistentes. As cores de risco têm significado: verde é seguro, amarelo e laranja
+são atenção, vermelho é crítico.
 """
 from __future__ import annotations
 
@@ -66,9 +65,6 @@ def aplicar_tema() -> None:
             .so-logo {{
                 display: flex; align-items: center; gap: 12px; margin-bottom: 4px;
             }}
-            .so-logo .mark {{
-                font-size: 1.7rem; filter: drop-shadow(0 0 8px {COR_ACENTO});
-            }}
             .so-logo .nome {{ font-size: 1.35rem; font-weight: 800; letter-spacing: 0.04em; }}
             .so-logo .nome span {{ color: {COR_ACENTO}; }}
             .so-sub {{ color: {COR_TEXTO_SUAVE}; font-size: 0.82rem; margin-top: -2px; }}
@@ -79,10 +75,9 @@ def aplicar_tema() -> None:
 
 
 def logo() -> str:
-    """Retorna o HTML do logotipo do sistema fictício (usado na sidebar e no header)."""
+    """Retorna o HTML do logotipo, usado na sidebar e no cabeçalho."""
     return (
         '<div class="so-logo">'
-        '<span class="mark">🛰️</span>'
         '<div><div class="nome">SENTINELA<span> Orbital</span></div>'
         '<div class="so-sub">Monitoramento de queimadas via satélite</div></div>'
         "</div>"

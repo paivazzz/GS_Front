@@ -1,7 +1,7 @@
 """Feature: Visão Geral (panorama nacional).
 
-Abre a narrativa de dados (storytelling): primeiro os KPIs do país, depois a
-evolução temporal e, por fim, onde se concentram os focos (ranking + bioma).
+Conta a história dos dados em ordem: primeiro os KPIs do país, depois a evolução no
+tempo e, por fim, onde os focos se concentram (ranking + bioma).
 """
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ def renderizar(focos: pd.DataFrame) -> None:
         "Visão consolidada dos focos de calor detectados por satélite no período selecionado.",
     )
 
-    # KPIs — reutiliza o componente cartao_metrica via linha_metricas.
+    # KPIs do topo.
     k = fire_pipeline.kpis(focos)
     components.linha_metricas(
         [
@@ -32,12 +32,12 @@ def renderizar(focos: pd.DataFrame) -> None:
     )
     st.write("")
 
-    # Evolução temporal (Plotly interativo).
+    # Evolução no tempo.
     components.cabecalho("Evolução diária dos focos")
     serie = fire_pipeline.serie_diaria(focos)
     st.plotly_chart(charts.serie_temporal_focos(serie), width='stretch')
 
-    # Concentração: ranking de estados + composição por bioma.
+    # Onde os focos se concentram: ranking de estados e composição por bioma.
     col_esq, col_dir = st.columns([3, 2])
     with col_esq:
         components.cabecalho("Estados com mais focos")

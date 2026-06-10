@@ -1,8 +1,7 @@
 """Componentes de UI reutilizáveis.
 
-`cartao_metrica` é o componente reutilizável exigido pela disciplina: ele é
-invocado em múltiplos lugares (visão geral e análise de risco) com parâmetros
-diferentes. Os demais (badge, cabeçalho) também são reaproveitados entre telas.
+O `cartao_metrica` é chamado em vários lugares (visão geral e análise de risco) com
+parâmetros diferentes. Badge e cabeçalho também se repetem entre as telas.
 """
 from __future__ import annotations
 
@@ -12,7 +11,7 @@ from . import theme
 
 
 def cabecalho(titulo: str, subtitulo: str = "") -> None:
-    """Renderiza um cabeçalho de seção padronizado (reutilizado em todas as telas)."""
+    """Cabeçalho de seção padronizado, usado em todas as telas."""
     st.markdown(f"### {titulo}")
     if subtitulo:
         st.markdown(f"<div class='so-sub'>{subtitulo}</div>", unsafe_allow_html=True)
@@ -42,16 +41,15 @@ def cartao_metrica(rotulo: str, valor: str, delta: str = "", cor: str | None = N
 
 
 def badge_risco(label: str) -> str:
-    """Retorna o HTML de um badge colorido conforme o nível de risco (semântico)."""
+    """Retorna o HTML de um badge colorido conforme o nível de risco."""
     cor = theme.COR_RISCO.get(label, theme.COR_TEXTO_SUAVE)
     return f"<span class='so-badge' style='background:{cor}'>{label}</span>"
 
 
 def linha_metricas(itens: list[dict]) -> None:
-    """Compõe uma linha de cartões de métrica a partir de uma lista de specs.
+    """Monta uma linha de cartões de métrica a partir de uma lista de specs.
 
-    Cada item: {"rotulo":..., "valor":..., "delta":..., "cor":...}. Demonstra o
-    reuso de ``cartao_metrica`` em diferentes contextos/parametrizações.
+    Cada item é um dict: {"rotulo":..., "valor":..., "delta":..., "cor":...}.
     """
     colunas = st.columns(len(itens))
     for coluna, item in zip(colunas, itens):

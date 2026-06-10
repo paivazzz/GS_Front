@@ -1,8 +1,8 @@
-"""Gerenciamento centralizado do estado da sessão Streamlit.
+"""Estado da sessão do Streamlit, gerenciado em um lugar só.
 
-Define os valores padrão, inicializa o ``st.session_state`` uma única vez por sessão
-e expõe helpers para o fluxo de Feedback Humano (registro/decisão de alertas de
-evacuação). Nenhuma feature deve escrever em ``st.session_state`` diretamente.
+Define os valores padrão, inicializa o ``st.session_state`` uma vez por sessão e
+expõe helpers para registrar as decisões humanas sobre os alertas de evacuação.
+As features não devem escrever no ``st.session_state`` direto: passam por aqui.
 """
 from __future__ import annotations
 

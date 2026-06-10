@@ -1,10 +1,10 @@
-"""SENTINELA Orbital — ponto de entrada da aplicação Streamlit.
+"""SENTINELA Orbital: ponto de entrada da aplicação Streamlit.
 
-Responsabilidade: compor a aplicação. Configura a página, aplica o design system,
-carrega os dados (com cache), inicializa o estado, renderiza a sidebar de filtros e
-distribui o fluxo para as features (abas). Toda a lógica vive nas camadas em ``src/``.
+Aqui só montamos a tela: configura a página, aplica o tema, carrega os dados com
+cache, inicializa o estado, desenha a sidebar de filtros e distribui o fluxo para as
+abas. A lógica fica nas camadas em ``src/``.
 
-Execução:  streamlit run app.py
+Execução: streamlit run app.py
 """
 from __future__ import annotations
 
@@ -19,7 +19,6 @@ from src.ui import sidebar, theme
 
 st.set_page_config(
     page_title="SENTINELA Orbital",
-    page_icon="🛰️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -29,8 +28,8 @@ def main() -> None:
     theme.aplicar_tema()
     session.inicializar()
 
-    # --- Carregamento com cache (dados custosos + modelo treinado) ---
-    with st.spinner("Conectando aos satélites e carregando dados…"):
+    # Dados e modelo vêm do cache e só recomputam se algo mudar.
+    with st.spinner("Carregando dados e modelo..."):
         focos_raw = carregar_focos()
         clima_raw = carregar_clima()
         modelo, metricas_modelo = carregar_modelo()
@@ -38,10 +37,10 @@ def main() -> None:
     data_min = focos_raw["data"].min().date()
     data_max = focos_raw["data"].max().date()
 
-    # --- Sidebar (filtros globais reutilizáveis) ---
+    # Sidebar: única fonte dos filtros globais.
     filtros = sidebar.renderizar(data_min, data_max, metricas_modelo)
 
-    # --- Aplicação dos filtros (pipeline) ---
+    # Aplica os filtros aos dados brutos.
     focos = fire_pipeline.aplicar_filtros(
         focos_raw, filtros.data_inicio, filtros.data_fim, filtros.biomas, filtros.confianca_min
     )
@@ -52,7 +51,7 @@ def main() -> None:
         clima_filtrado = clima_filtrado[clima_filtrado["bioma"].isin(filtros.biomas)]
     clima_snapshot = climate_pipeline.snapshot_por_estado(clima_filtrado)
 
-    # --- Cabeçalho principal ---
+    # Cabeçalho com logo e o resumo do recorte atual.
     col_logo, col_status = st.columns([3, 1])
     with col_logo:
         st.markdown(theme.logo(), unsafe_allow_html=True)
@@ -65,9 +64,9 @@ def main() -> None:
         )
     st.divider()
 
-    # --- Abas (features) ---
+    # Uma aba por feature.
     aba_geral, aba_mapa, aba_risco, aba_clima = st.tabs(
-        ["📊 Visão Geral", "🗺️ Mapa de Focos", "🔥 Análise de Risco (IA)", "🌡️ Clima"]
+        ["Visão Geral", "Mapa de Focos", "Análise de Risco (IA)", "Clima"]
     )
     with aba_geral:
         overview.renderizar(focos)

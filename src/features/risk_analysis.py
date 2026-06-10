@@ -1,9 +1,8 @@
-"""Feature: Análise de Risco com IA + Feedback Humano (human-in-the-loop).
+"""Feature: Análise de Risco com IA e revisão humana (human-in-the-loop).
 
-Esta é a tela que cumpre o requisito de "Feedback Humano": o modelo de IA classifica
-o risco de queimada por estado e SUGERE alertas de evacuação para os estados em risco
-Alto/Crítico. O envio do alerta NÃO é automático — um operador da Defesa Civil precisa
-APROVAR ou DESCARTAR cada sugestão, e a decisão fica registrada no estado da sessão.
+O modelo classifica o risco de queimada de cada estado e sugere alertas de evacuação
+para os que estão em risco Alto ou Crítico. O alerta não sai sozinho: um operador da
+Defesa Civil aprova ou descarta cada sugestão, e a decisão fica guardada na sessão.
 """
 from __future__ import annotations
 
@@ -16,7 +15,7 @@ from ..ui import charts, components
 
 
 def _painel_features_modelo(metricas: dict) -> None:
-    """Mostra a importância das features do modelo (reusa grafico_barras)."""
+    """Mostra o peso de cada feature na decisão do modelo."""
     imp = (
         pd.DataFrame(
             {"feature": list(metricas["importancias"].keys()),
@@ -35,12 +34,12 @@ def _fluxo_human_in_the_loop(criticos: pd.DataFrame) -> None:
     """Renderiza os cards de aprovação/descarte de alertas de evacuação."""
     components.cabecalho(
         "Triagem de alertas (human-in-the-loop)",
-        "O modelo sugere alertas para estados em risco Alto/Crítico. Um operador deve "
-        "revisar e decidir — nenhum alerta é disparado automaticamente.",
+        "O modelo sugere alertas para estados em risco Alto ou Crítico. Um operador "
+        "revisa e decide. Nenhum alerta é disparado automaticamente.",
     )
 
     if criticos.empty:
-        st.success("✅ Nenhum estado em risco Alto ou Crítico no período filtrado.")
+        st.success("Nenhum estado em risco Alto ou Crítico no período filtrado.")
         return
 
     for _, linha in criticos.iterrows():
@@ -60,16 +59,15 @@ def _fluxo_human_in_the_loop(criticos: pd.DataFrame) -> None:
                 )
             with col_acao:
                 if decisao:
-                    icone = "📤" if decisao["decisao"] == "Aprovado" else "🚫"
                     st.markdown(
-                        f"{icone} **{decisao['decisao']}** em {decisao['quando']}"
+                        f"**{decisao['decisao']}** em {decisao['quando']}"
                     )
                 else:
                     b1, b2 = st.columns(2)
-                    if b1.button("📤 Aprovar alerta", key=f"aprovar_{uf}", width='stretch'):
+                    if b1.button("Aprovar alerta", key=f"aprovar_{uf}", width='stretch'):
                         session.registrar_decisao(uf, "Aprovado", linha["risco_label"])
                         st.rerun()
-                    if b2.button("🚫 Descartar", key=f"descartar_{uf}", width='stretch'):
+                    if b2.button("Descartar", key=f"descartar_{uf}", width='stretch'):
                         session.registrar_decisao(uf, "Descartado", linha["risco_label"])
                         st.rerun()
 
@@ -82,7 +80,7 @@ def renderizar(focos: pd.DataFrame, clima_snapshot: pd.DataFrame, modelo, metric
         "climáticas para estimar o risco de queimada de cada estado.",
     )
 
-    with st.spinner("Executando inferência do modelo de risco…"):
+    with st.spinner("Executando o modelo de risco..."):
         features = risk_pipeline.construir_features(focos, clima_snapshot)
         resultado = risk_pipeline.prever_risco(modelo, features)
 
@@ -90,7 +88,7 @@ def renderizar(focos: pd.DataFrame, clima_snapshot: pd.DataFrame, modelo, metric
         st.info("Sem dados suficientes para inferência. Ajuste os filtros.")
         return
 
-    # KPIs de risco — reutiliza cartao_metrica com cores semânticas.
+    # Contagem de estados em cada nível de risco, com as cores correspondentes.
     contagem = resultado["risco_label"].value_counts()
     components.linha_metricas(
         [
@@ -128,12 +126,12 @@ def renderizar(focos: pd.DataFrame, clima_snapshot: pd.DataFrame, modelo, metric
     _fluxo_human_in_the_loop(criticos)
 
     if st.session_state.get("alertas_decididos"):
-        if st.button("↺ Reiniciar triagem"):
+        if st.button("Reiniciar triagem"):
             session.resetar_decisoes()
             st.rerun()
 
     st.divider()
-    with st.expander("🤖 Como o modelo decide (importância das variáveis)"):
+    with st.expander("Como o modelo decide (importância das variáveis)"):
         st.caption(
             f"Acurácia de validação: **{metricas['acuracia']*100:.1f}%** · "
             f"{metricas['n_treino']} amostras de treino · {metricas['n_validacao']} de validação."

@@ -1,11 +1,11 @@
-"""Demonstração das camadas de dados SEM a interface (prova de independência da UI).
+"""Roda as camadas de dados sem a interface.
 
-Roda providers -> pipelines -> modelo de IA e imprime os resultados no console.
-Mostra que a arquitetura não depende do Streamlit para funcionar — basta rodar:
+Executa providers -> pipelines -> modelo de IA e imprime os resultados no console,
+mostrando que a lógica funciona sem o Streamlit. Basta rodar:
 
     python -m scripts.demo_pipeline
 
-Útil para depurar a lógica de negócio dentro do VS Code sem subir o app inteiro.
+Bom para depurar a lógica no VS Code sem subir o app inteiro.
 """
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from src.providers import climate_provider, satellite_provider
 
 def main() -> None:
     print("=" * 70)
-    print("SENTINELA Orbital — demo de pipeline (sem interface)")
+    print("SENTINELA Orbital - demo de pipeline (sem interface)")
     print("=" * 70)
 
     # 1) Providers
@@ -42,7 +42,7 @@ def main() -> None:
         pred[["estado", "risco_label", "risco_prob", "focos_total", "focos_dia", "dias_sem_chuva"]]
         .to_string(index=False)
     )
-    print("\nOK — todas as camadas executaram sem o Streamlit.")
+    print("\nOK - todas as camadas executaram sem o Streamlit.")
 
 
 if __name__ == "__main__":

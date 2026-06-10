@@ -1,7 +1,7 @@
-"""Feature: Mapa de Focos (geolocalização interativa).
+"""Feature: Mapa de Focos.
 
-Exibe os focos de calor georreferenciados em um mapa interativo (hover + zoom) e
-uma tabela detalhada dos focos mais intensos.
+Mostra os focos georreferenciados em um mapa interativo (com hover e zoom) e uma
+tabela com os focos mais intensos do período.
 """
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ def renderizar(focos: pd.DataFrame) -> None:
         "potência radiativa (FRP). Use o scroll para dar zoom e passe o mouse para detalhes.",
     )
 
-    with st.spinner("Renderizando focos georreferenciados…"):
+    with st.spinner("Renderizando focos..."):
         st.plotly_chart(charts.mapa_focos(focos), width='stretch')
 
     components.cabecalho("Focos mais intensos no período")

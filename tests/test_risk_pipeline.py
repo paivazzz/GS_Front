@@ -1,4 +1,4 @@
-"""Testes do pipeline de risco (modelo de IA) — independentes do Streamlit."""
+"""Testes do pipeline de risco (modelo de IA), independentes do Streamlit."""
 from src.pipelines import climate_pipeline, risk_pipeline
 from src.providers import climate_provider, satellite_provider
 

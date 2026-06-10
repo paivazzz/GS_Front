@@ -1,6 +1,6 @@
-"""Testes do pipeline de focos — provam que a camada roda sem o Streamlit.
+"""Testes do pipeline de focos: provam que a camada roda sem o Streamlit.
 
-Executar:  python -m pytest -q   (ou)   python -m pytest tests/test_fire_pipeline.py -v
+Executar: python -m pytest -q   (ou)   python -m pytest tests/test_fire_pipeline.py -v
 """
 import pandas as pd
 

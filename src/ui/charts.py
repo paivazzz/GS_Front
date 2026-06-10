@@ -1,11 +1,10 @@
-"""Funções de visualização reutilizáveis (Plotly interativo + Matplotlib complementar).
+"""Funções de visualização reutilizáveis (Plotly interativo + Matplotlib).
 
-`grafico_barras` é deliberadamente genérico e reutilizado em mais de um lugar
-(ranking de estados, composição por bioma, importância das features do modelo),
-cumprindo o requisito de componentização real de UI.
+O `grafico_barras` é genérico de propósito e aparece em vários lugares (ranking de
+estados, composição por bioma, importância das features do modelo).
 
-Plotly é usado nas visualizações principais (hover + zoom). Matplotlib entra como
-gráfico complementar (correlação clima x risco), conforme permitido pela disciplina.
+Plotly cuida das visualizações principais, com hover e zoom. O Matplotlib entra só
+no gráfico complementar de clima x risco.
 """
 from __future__ import annotations
 
@@ -27,10 +26,10 @@ _LAYOUT_BASE = dict(
 
 
 def mapa_focos(df: pd.DataFrame) -> go.Figure:
-    """Mapa interativo (hover + zoom) de focos de calor, colorido por intensidade (FRP).
+    """Mapa interativo de focos de calor, colorido pela intensidade (FRP).
 
-    Usa OpenStreetMap (sem necessidade de token de Mapbox). Cor semântica: tons
-    quentes = focos mais intensos.
+    Usa OpenStreetMap, então não precisa de token do Mapbox. Tons mais quentes são
+    focos mais intensos.
     """
     if df.empty:
         fig = go.Figure()
@@ -89,10 +88,10 @@ def serie_temporal_focos(serie: pd.DataFrame) -> go.Figure:
 def grafico_barras(
     df: pd.DataFrame, x: str, y: str, titulo: str = "", cor: str | None = None, horizontal: bool = False
 ) -> go.Figure:
-    """Gráfico de barras genérico e reutilizável.
+    """Gráfico de barras genérico.
 
-    Reutilizado para: ranking de estados, composição por bioma e importância das
-    features do modelo — cada chamada passa colunas/orientação diferentes.
+    Serve ao ranking de estados, à composição por bioma e à importância das features
+    do modelo. Cada chamada passa colunas e orientação diferentes.
     """
     orient = "h" if horizontal else "v"
     fig = px.bar(
@@ -117,10 +116,10 @@ def pizza_bioma(df: pd.DataFrame) -> go.Figure:
 
 
 def dispersao_clima_risco(df: pd.DataFrame):
-    """Gráfico COMPLEMENTAR em Matplotlib: umidade x dias sem chuva, colorido por risco.
+    """Gráfico em Matplotlib: umidade x dias sem chuva, colorido por risco.
 
-    Demonstra correlação entre seca e risco previsto. Retorna uma Figure do
-    Matplotlib (renderizada via st.pyplot).
+    Mostra a relação entre seca e o risco previsto. Retorna uma Figure do Matplotlib,
+    renderizada via st.pyplot.
     """
     fig, ax = plt.subplots(figsize=(6, 3.4))
     fig.patch.set_alpha(0)

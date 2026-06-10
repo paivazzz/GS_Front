@@ -1,7 +1,7 @@
 """Feature: Tendências Climáticas.
 
-Mostra a evolução de temperatura, umidade e precipitação — variáveis que explicam
-o aumento do risco de queimada — com filtro próprio por estado.
+Acompanha temperatura, umidade e precipitação, que são as variáveis ligadas ao
+aumento do risco de queimada, com um filtro próprio por estado.
 """
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ def renderizar(clima: pd.DataFrame) -> None:
         "Acompanhe a janela seca por estado.",
     )
 
-    # Filtro local extra (além dos globais da sidebar): seleção de estados.
+    # Filtro só desta aba (além dos globais da sidebar): escolha de estados.
     ufs = st.multiselect(
         "Estados",
         options=[e.uf for e in geo_provider.listar_estados()],

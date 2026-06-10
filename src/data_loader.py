@@ -1,16 +1,15 @@
-"""Orquestração de carregamento com cache do Streamlit.
+"""Carregamento dos dados e do modelo, com o cache do Streamlit.
 
-Concentra o ponto onde os providers (custosos) e o treino do modelo de IA são
-chamados, aplicando a estratégia de cache correta:
+É o único lugar que chama os providers e o treino do modelo, escolhendo o tipo de
+cache certo para cada caso:
 
-* ``@st.cache_data``  -> para DataFrames (focos, clima): serializáveis e imutáveis
-  entre reruns; só recomputam se os argumentos mudarem.
-* ``@st.cache_resource`` -> para o modelo treinado (objeto não-serializável que deve
-  ser compartilhado entre sessões e reusado a cada rerun, sem retreinar).
+* ``@st.cache_data`` para DataFrames (focos, clima): só recomputam se os argumentos
+  mudarem.
+* ``@st.cache_resource`` para o modelo treinado, que é compartilhado entre sessões e
+  reusado a cada rerun sem retreinar.
 
-Sem este cache, cada interação do usuário (mudar um filtro) re-geraria todos os
-dados e re-treinaria o modelo, tornando o app lento — exatamente o que a disciplina
-pede para evitar.
+Sem isso, cada mudança de filtro regeraria todos os dados e retreinaria o modelo,
+deixando o app lento à toa.
 """
 from __future__ import annotations
 
@@ -26,7 +25,7 @@ from .providers import climate_provider, satellite_provider
 @st.cache_data(show_spinner=False)
 def carregar_focos(dias: int = 90) -> pd.DataFrame:
     """Carrega (e cacheia) os focos de calor dos últimos ``dias``."""
-    time.sleep(0.6)  # simula latência de uma chamada de rede real (design p/ latência)
+    time.sleep(0.6)  # simula a latência de uma chamada de rede
     return satellite_provider.gerar_focos(dias=dias)
 
 
